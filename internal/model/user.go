@@ -4,6 +4,7 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"fmt"
+	"gorm.io/gorm"
 	"time"
 
 	"github.com/alist-org/alist/v3/internal/errs"
@@ -22,15 +23,16 @@ const (
 const StaticHashSalt = "https://github.com/alist-org/alist"
 
 type User struct {
-	ID       uint   `json:"id" gorm:"primaryKey"`                      // unique key
-	Username string `json:"username" gorm:"unique" binding:"required"` // username
-	PwdHash  string `json:"-"`                                         // password hash
-	PwdTS    int64  `json:"-"`                                         // password timestamp
-	Salt     string `json:"-"`                                         // unique salt
-	Password string `json:"password"`                                  // password
-	BasePath string `json:"base_path"`                                 // base path
-	Role     int    `json:"role"`                                      // user's role
-	Disabled bool   `json:"disabled"`
+	ID        uint   `json:"id" gorm:"primaryKey"`                      // unique key
+	Username  string `json:"username" gorm:"unique" binding:"required"` // username
+	PwdHash   string `json:"-"`                                         // password hash
+	PwdTS     int64  `json:"-"`                                         // password timestamp
+	Salt      string `json:"-"`                                         // unique salt
+	Password  string `json:"password"`                                  // password
+	UserGroup string `json:"user_group"`
+	BasePath  string `json:"base_path"` // base path
+	Role      int    `json:"role"`      // user's role
+	Disabled  bool   `json:"disabled"`
 	// Determine permissions by bit
 	//   0: can see hidden files
 	//   1: can access without password
@@ -45,7 +47,7 @@ type User struct {
 	Permission int32  `json:"permission"`
 	OtpSecret  string `json:"-"`
 	SsoID      string `json:"sso_id"` // unique by sso platform
-	Authn      string `gorm:"type:text" json:"-"`
+	Authn      string `json:"-" gorm:"type:text"`
 }
 
 func (u *User) IsGuest() bool {
@@ -158,4 +160,38 @@ func (u *User) WebAuthnCredentials() []webauthn.Credential {
 
 func (u *User) WebAuthnIcon() string {
 	return "https://alist.nn.ci/logo.svg"
+}
+
+func (u *User) AfterCreate(db *gorm.DB) error {
+	if u.UserGroup != "" {
+		return db.Model(&UserGroup{}).Where("user_group_name = ?", u.UserGroup).UpdateColumn("size", gorm.Expr("size + ?", 1)).Error
+	}
+	return nil
+}
+
+func (u *User) AfterDelete(db *gorm.DB) error {
+	if u.UserGroup != "" {
+		return db.Model(&UserGroup{}).Where("user_group_name = ?", u.UserGroup).UpdateColumn("size", gorm.Expr("size - ?", 1)).Error
+	}
+	return nil
+}
+
+func (u *User) BeforeUpdate(db *gorm.DB) error {
+	var user User
+	err := db.Debug().First(&user, u.ID).Error
+	if u.UserGroup != user.UserGroup {
+		if u.UserGroup != "" {
+			err = db.Model(&UserGroup{}).Where("user_group_name = ?", u.UserGroup).UpdateColumn("size", gorm.Expr("size + ?", 1)).Error
+			if err != nil {
+				return err
+			}
+		}
+		if user.UserGroup != "" {
+			err = db.Model(&UserGroup{}).Where("user_group_name = ?", user.UserGroup).UpdateColumn("size", gorm.Expr("size - ?", 1)).Error
+			if err != nil {
+				return err
+			}
+		}
+	}
+	return nil
 }
