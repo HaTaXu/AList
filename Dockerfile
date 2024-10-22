@@ -10,7 +10,7 @@ RUN bash build.sh release docker
 FROM alpine:edge
 
 ARG INSTALL_FFMPEG=false
-LABEL MAINTAINER="i@nn.ci"
+LABEL MAINTAINER="294@bot"
 
 WORKDIR /opt/alist/
 

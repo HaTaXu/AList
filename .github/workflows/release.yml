@@ -20,15 +20,15 @@ jobs:
           id: ${{ github.event.release.id }}
           prerelease: true
 
-      - name: Setup Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: ${{ matrix.go-version }}
-
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ matrix.go-version }}
 
       - name: Install dependencies
         run: |
@@ -62,9 +62,9 @@ jobs:
 
       - name: Add tag
         run: |
-          git config --local user.email "bot@nn.ci"
+          git config --local user.email "294@bot"
           git config --local user.name "IlaBot"
-          version=$(wget -qO- -t1 -T2 "https://api.github.com/repos/alist-org/alist/releases/latest" | grep "tag_name" | head -n 1 | awk -F ":" '{print $2}' | sed 's/\"//g;s/,//g;s/ //g')
+          version=$(wget -qO- -t1 -T2 "https://api.github.com/repos/HaTaXu/alist/releases/latest" | grep "tag_name" | head -n 1 | awk -F ":" '{print $2}' | sed 's/\"//g;s/,//g;s/ //g')
           git tag -a $version -m "release $version"
 
       - name: Push tags

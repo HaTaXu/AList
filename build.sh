@@ -1,7 +1,7 @@
 appName="alist"
 builtAt="$(date +'%F %T %z')"
 goVersion=$(go version | sed 's/go version //')
-gitAuthor="Xhofe <i@nn.ci>"
+gitAuthor="HanTx <247777055@qq.com>"
 gitCommit=$(git log --pretty=format:"%h" -1)
 
 if [ "$1" = "dev" ]; then
@@ -10,7 +10,7 @@ if [ "$1" = "dev" ]; then
 else
   git tag -d beta
   version=$(git describe --abbrev=0 --tags)
-  webVersion=$(wget -qO- -t1 -T2 "https://api.github.com/repos/alist-org/alist-web/releases/latest" | grep "tag_name" | head -n 1 | awk -F ":" '{print $2}' | sed 's/\"//g;s/,//g;s/ //g')
+  webVersion=$(wget -qO- -t1 -T2 "https://api.github.com/repos/HaTaXu/AList-Web/releases/latest" | grep "tag_name" | head -n 1 | awk -F ":" '{print $2}' | sed 's/\"//g;s/,//g;s/ //g')
 fi
 
 echo "backend version: $version"
@@ -27,15 +27,15 @@ ldflags="\
 "
 
 FetchWebDev() {
-  curl -L https://codeload.github.com/alist-org/web-dist/tar.gz/refs/heads/dev -o web-dist-dev.tar.gz
-  tar -zxvf web-dist-dev.tar.gz
+  curl -L https://codeload.github.com/HaTaXu/MyAList-Web-dist/tar.gz/refs/heads/dev -o MyAList-Web-dist-dev.tar.gz
+  tar -zxvf MyAList-Web-dist-dev.tar.gz
   rm -rf public/dist
-  mv -f web-dist-dev/dist public
-  rm -rf web-dist-dev web-dist-dev.tar.gz
+  mv -f MyAList-Web-dist-dev/dist public
+  rm -rf MyAList-Web-dist-dev MyAList-Web-dist-dev.tar.gz
 }
 
 FetchWebRelease() {
-  curl -L https://github.com/alist-org/alist-web/releases/latest/download/dist.tar.gz -o dist.tar.gz
+  curl -L https://github.com/HaTaXu/AList-Web/releases/latest/download/dist.tar.gz -o dist.tar.gz
   tar -zxvf dist.tar.gz
   rm -rf public/dist
   mv -f dist public

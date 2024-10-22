@@ -2,7 +2,7 @@ FROM alpine:edge
 
 ARG TARGETPLATFORM
 ARG INSTALL_FFMPEG=false
-LABEL MAINTAINER="i@nn.ci"
+LABEL MAINTAINER="294@bot"
 
 WORKDIR /opt/alist/
 

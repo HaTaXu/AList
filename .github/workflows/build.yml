@@ -19,13 +19,14 @@ jobs:
     name: Build
     runs-on: ${{ matrix.platform }}
     steps:
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
           go-version: ${{ matrix.go-version }}
-
-      - name: Checkout
-        uses: actions/checkout@v4
 
       - uses: benjlevesque/short-sha@v3.0
         id: short-sha
@@ -44,5 +45,5 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: alist_${{ env.SHA }}
+          name: AList_${{ env.SHA }}
           path: dist
