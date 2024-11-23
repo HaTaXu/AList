@@ -36,7 +36,7 @@ func Auth(c *gin.Context) {
 			return
 		}
 		if guest.Disabled {
-			common.ErrorStrResp(c, "Guest user is disabled, login please", 401)
+			common.ErrorStrResp(c, "游客用户被禁用，请登录", 401)
 			c.Abort()
 			return
 		}
