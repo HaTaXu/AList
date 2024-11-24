@@ -98,14 +98,15 @@ func DefaultConfig() *Config {
 	logPath := filepath.Join(flags.DataDir, "log/log.log")
 	dbPath := filepath.Join(flags.DataDir, "data.db")
 	return &Config{
+		SiteURL: "https://www.shaanstar.art",
 		Scheme: Scheme{
 			Address:    "0.0.0.0",
 			UnixFile:   "",
-			HttpPort:   29475,
-			HttpsPort:  -1,
+			HttpPort:   -1,
+			HttpsPort:  29475,
 			ForceHttps: false,
-			CertFile:   "",
-			KeyFile:    "",
+			CertFile:   "data/shaanstar.art.pem",
+			KeyFile:    "data/shaanstar.art.key",
 		},
 		JwtSecret:      random.String(16),
 		TokenExpiresIn: 48,
